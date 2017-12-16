@@ -3,6 +3,7 @@
 (require-extension srfi-13)
 (require-extension extras)
 (require-extension utils)
+(require-extension regex)
 
 (define backlight-path
   "/sys/class/backlight/intel_backlight/")
@@ -47,9 +48,24 @@
                (calc-actual-brigtness
                 (string->number value)))))))
 
-(let ((args (command-line-arguments)))
-  (if (null? args)
-      (print (get-brigthness-perc))
-      (set-brigthness! (car args))))
+(define (is-add-pattern? x)
+  (string-match "^\\+[0-9]+$" x))
 
+(define (is-sub-pattern? x)
+  (string-match "^\\-[0-9]+$" x))
+
+(define (is-num-pattern? x)
+  (string-match "^[0-9]+$" x))
+
+(define (run!)
+  (let ((args (command-line-arguments)))
+    (if (null? args)
+        (print (get-brigthness-perc))
+        (let ((arg (car args)))
+          (cond
+           ((is-num-pattern? arg) (set-brigthness! arg))
+           ((is-add-pattern? arg) (print "add"))
+           ((is-sub-pattern? arg) (print "sub")))))))
+
+(run!)
 
