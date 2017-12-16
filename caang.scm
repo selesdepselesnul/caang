@@ -35,7 +35,7 @@
 
 (define (calc-actual-brigtness x)
   (inexact->exact
-   (floor
+   (round
     (/ (* x (get-max-brigthness))
        100))))
 
