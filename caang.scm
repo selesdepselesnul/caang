@@ -80,7 +80,8 @@
          ((is-add-pattern? arg)
           (set-brigthness-with! + arg))
          ((is-sub-pattern? arg)
-          (set-brigthness-with! - arg))))))
+          (set-brigthness-with! - arg))
+         (else (print "format doesn't valid, valid ex : +2, -2, or 2"))))))
 
 (run! (command-line-arguments))
 
