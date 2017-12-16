@@ -32,13 +32,24 @@
         (get-max-brigthness))
      100))
 
+(define (calc-actual-brigtness x)
+  (inexact->exact
+   (floor
+    (/ (* x (get-max-brigthness))
+       100))))
+
 (define (set-brigthness! value)
   (with-output-to-file
       backlight-brigthness-file 
     (lambda ()
-      (format #t value))))
+      (format #t
+              (number->string
+               (calc-actual-brigtness
+                (string->number value)))))))
 
 (let ((args (command-line-arguments)))
   (if (null? args)
       (print (get-brigthness-perc))
       (set-brigthness! (car args))))
+
+
