@@ -70,18 +70,17 @@
     (f (get-brigthness-perc)
        (extract-num x)))))
 
-(define (run!)
-  (let ((args (command-line-arguments)))
-    (if (null? args)
-        (print (get-brigthness-perc))
-        (let ((arg (car args)))
-          (cond
-           ((is-num-pattern? arg)
-            (set-brigthness! arg))
-           ((is-add-pattern? arg)
-            (set-brigthness-with! + arg))
-           ((is-sub-pattern? arg)
-            (set-brigthness-with! - arg)))))))
+(define (run! args)
+  (if (null? args)
+      (print (get-brigthness-perc))
+      (let ((arg (car args)))
+        (cond
+         ((is-num-pattern? arg)
+          (set-brigthness! arg))
+         ((is-add-pattern? arg)
+          (set-brigthness-with! + arg))
+         ((is-sub-pattern? arg)
+          (set-brigthness-with! - arg))))))
 
-(run!)
+(run! (command-line-arguments))
 
