@@ -28,7 +28,7 @@
   (string->number
    (read-all-trim backlight-brigthness-file)))
 
-(define (get-brigthness-perc)
+(define (get-brigthness-perc) 
   (* (/ (get-brigthness)
         (get-max-brigthness))
      100))
@@ -57,15 +57,28 @@
 (define (is-num-pattern? x)
   (string-match "^[0-9]+$" x))
 
+(define (extract-num x)
+  (string->number
+   (string-substitute
+    "^(\\+|\\-)([0-9]+)$"
+    "\\2"
+    x)))
+
 (define (run!)
   (let ((args (command-line-arguments)))
     (if (null? args)
         (print (get-brigthness-perc))
         (let ((arg (car args)))
           (cond
-           ((is-num-pattern? arg) (set-brigthness! arg))
-           ((is-add-pattern? arg) (print "add"))
-           ((is-sub-pattern? arg) (print "sub")))))))
+           ((is-num-pattern? arg)
+            (set-brigthness! arg))
+           ((is-add-pattern? arg)
+            (set-brigthness!
+             (number->string
+              (+ (get-brigthness-perc)
+                 (extract-num arg)))))
+           ((is-sub-pattern? arg)
+            (print "sub")))))))
 
 (run!)
 
