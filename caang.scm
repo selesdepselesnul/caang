@@ -64,6 +64,12 @@
     "\\2"
     x)))
 
+(define (set-brigthness-with! f x)
+  (set-brigthness!
+   (number->string
+    (f (get-brigthness-perc)
+       (extract-num x)))))
+
 (define (run!)
   (let ((args (command-line-arguments)))
     (if (null? args)
@@ -73,12 +79,9 @@
            ((is-num-pattern? arg)
             (set-brigthness! arg))
            ((is-add-pattern? arg)
-            (set-brigthness!
-             (number->string
-              (+ (get-brigthness-perc)
-                 (extract-num arg)))))
+            (set-brigthness-with! + arg))
            ((is-sub-pattern? arg)
-            (print "sub")))))))
+            (set-brigthness-with! - arg)))))))
 
 (run!)
 
