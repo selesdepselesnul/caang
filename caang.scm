@@ -68,17 +68,18 @@
     "\\2"
     x)))
 
-(define (adjust-brigthness! f x)
-  (set-brigthness!
-   (number->string
-    (f (get-brigthness-perc)
-       (extract-num x)))))
-
 (define (run-if-range-valid! x f)
   (let ((arg-num (string->number x)))
     (if (and (> arg-num 0) (<= arg-num 100))
         (f x)
         (print "must be in valid range 1..100"))))
+
+(define (adjust-brigthness! f brigthness)
+  (let ((val (number->string
+              (f (get-brigthness-perc)
+                 (extract-num brigthness)))))
+    (run-if-range-valid! val
+                         (lambda (x) (set-brigthness! x)))))
 
 (define (run! args)
   (if (null? args)
