@@ -74,6 +74,12 @@
     (f (get-brigthness-perc)
        (extract-num x)))))
 
+(define (run-if-range-valid! x f)
+  (let ((arg-num (string->number x)))
+    (if (and (> arg-num 0) (<= arg-num 100))
+        (f x)
+        (print "must be in valid range 1..100"))))
+
 (define (run! args)
   (if (null? args)
       (print (round-exact
@@ -81,10 +87,7 @@
       (let ((arg (car args)))
         (cond
          ((is-num-pattern? arg)
-          (let ((arg-num (string->number arg)))
-            (if (and (> arg-num 0) (<= arg-num 100))
-                (set-brigthness! arg)
-                (print "must be in valid range 1..100"))))
+          (run-if-range-valid! arg (lambda (x) (set-brigthness! x))))
          ((is-add-pattern? arg)
           (adjust-brigthness! + arg))
          ((is-sub-pattern? arg)
