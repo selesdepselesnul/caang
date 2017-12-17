@@ -33,6 +33,10 @@
         (get-max-brigthness))
      100))
 
+(define (round-exact x)
+  (inexact->exact
+   (round x)))
+
 (define (calc-actual-brigtness x)
   (inexact->exact
    (round
@@ -72,7 +76,8 @@
 
 (define (run! args)
   (if (null? args)
-      (print (get-brigthness-perc))
+      (print (round-exact
+              (get-brigthness-perc)))
       (let ((arg (car args)))
         (cond
          ((is-num-pattern? arg)
