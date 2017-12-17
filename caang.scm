@@ -68,7 +68,7 @@
     "\\2"
     x)))
 
-(define (set-brigthness-with! f x)
+(define (adjust-brigthness! f x)
   (set-brigthness!
    (number->string
     (f (get-brigthness-perc)
@@ -81,12 +81,16 @@
       (let ((arg (car args)))
         (cond
          ((is-num-pattern? arg)
-          (set-brigthness! arg))
+          (let ((arg-num (string->number arg)))
+            (if (and (> arg-num 0) (<= arg-num 100))
+                (set-brigthness! arg)
+                (print "must be in valid range 1..100"))))
          ((is-add-pattern? arg)
-          (set-brigthness-with! + arg))
+          (adjust-brigthness! + arg))
          ((is-sub-pattern? arg)
-          (set-brigthness-with! - arg))
-         (else (print "format doesn't valid, valid ex : +2, -2, or 2"))))))
+          (adjust-brigthness! - arg))
+         (else
+          (print "format doesn't valid, valid ex : +2, -2, or 2"))))))
 
 (run! (command-line-arguments))
 
