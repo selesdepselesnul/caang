@@ -5,6 +5,7 @@
 (require-extension utils)
 (require-extension regex)
 (require-extension ansi-escape-sequences)
+(require-extension fmt)
 
 (define backlight-path
   "/sys/class/backlight/intel_backlight/")
@@ -82,12 +83,13 @@
     (run-if-range-valid! val
                          (lambda (x) (set-brigthness! x)))))
 
-(define (adjust-live)
-  (print "current brigthness : ")
-  (print (round-exact
-          (get-brigthness-perc)))
-  (choose-adjust-type! (read-line)) 
-  (adjust-live))
+(define (adjust-live!)
+  (let ((current-brigthness (number->string
+                             (round-exact
+                              (get-brigthness-perc)))))
+    (print (fmt #f "Current brigthness: " current-brigthness nl)) 
+    (choose-adjust-type! (read-line)) 
+    (adjust-live!)))
 
 (define (choose-adjust-type! x)
   (cond
@@ -106,8 +108,7 @@
               (get-brigthness-perc)))
       (let ((arg (car args)))
         (if (string-ci=  arg "--live")
-            (adjust-live)
+            (adjust-live!)
             (choose-adjust-type! arg)))))
 
 (run! (command-line-arguments))
-
