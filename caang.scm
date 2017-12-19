@@ -4,6 +4,7 @@
 (require-extension extras)
 (require-extension utils)
 (require-extension regex)
+(require-extension ansi-escape-sequences)
 
 (define backlight-path
   "/sys/class/backlight/intel_backlight/")
@@ -81,20 +82,32 @@
     (run-if-range-valid! val
                          (lambda (x) (set-brigthness! x)))))
 
+(define (adjust-live)
+  (print "current brigthness : ")
+  (print (round-exact
+          (get-brigthness-perc)))
+  (choose-adjust-type! (read-line)) 
+  (adjust-live))
+
+(define (choose-adjust-type! x)
+  (cond
+   ((is-num-pattern? x)
+    (run-if-range-valid! x (lambda (x) (set-brigthness! x))))
+   ((is-add-pattern? x)
+    (adjust-brigthness! + x))
+   ((is-sub-pattern? x)
+    (adjust-brigthness! - x))
+   (else
+    (print "format doesn't valid, valid ex : +2, -2, or 2"))))
+
 (define (run! args)
   (if (null? args)
       (print (round-exact
               (get-brigthness-perc)))
       (let ((arg (car args)))
-        (cond
-         ((is-num-pattern? arg)
-          (run-if-range-valid! arg (lambda (x) (set-brigthness! x))))
-         ((is-add-pattern? arg)
-          (adjust-brigthness! + arg))
-         ((is-sub-pattern? arg)
-          (adjust-brigthness! - arg))
-         (else
-          (print "format doesn't valid, valid ex : +2, -2, or 2"))))))
+        (if (string-ci=  arg "--live")
+            (adjust-live)
+            (choose-adjust-type! arg)))))
 
 (run! (command-line-arguments))
 
