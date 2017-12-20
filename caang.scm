@@ -45,13 +45,15 @@
        100))))
 
 (define (set-brigthness! value)
-  (with-output-to-file
-      backlight-brigthness-file 
-    (lambda ()
-      (format #t
-              (number->string
-               (calc-actual-brigtness
-                (string->number value)))))))
+  (run-if-range-valid!
+   value
+   (lambda (x)
+     (with-output-to-file backlight-brigthness-file
+       (lambda ()
+         (format #t
+                 (number->string
+                  (calc-actual-brigtness
+                   (string->number x)))))))))
 
 (define (is-add-pattern? x)
   (string-match "^\\+[0-9]+$" x))
@@ -93,7 +95,7 @@
 (define (choose-adjust-type! x)
   (cond
    ((is-num-pattern? x)
-    (run-if-range-valid! x (lambda (x) (set-brigthness! x))))
+    (set-brigthness! x))
    ((is-add-pattern? x)
     (adjust-brigthness! + x))
    ((is-sub-pattern? x)
@@ -106,8 +108,16 @@
       (print (round-exact
               (get-brigthness-perc)))
       (let ((arg (car args)))
-        (if (string-ci=  arg "--live")
-            (adjust-live!)
-            (choose-adjust-type! arg)))))
+        (cond
+         ((string-ci= arg "--live")
+          (adjust-live!))
+         ((string-ci= arg "--min")
+          (set-brigthness! "1"))
+         ((string-ci= arg "--max")
+          (set-brigthness! "100"))
+         (else
+          (choose-adjust-type! arg))))))
 
 (run! (command-line-arguments))
+
+
