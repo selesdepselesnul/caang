@@ -1,4 +1,3 @@
-#!/usr/bin/env ./runscheme.sh
 ;; -*- geiser-scheme-implementation: 'chicken -*-
 (require-extension srfi-13)
 (require-extension extras)
