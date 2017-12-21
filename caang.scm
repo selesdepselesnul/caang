@@ -118,6 +118,11 @@
          (else
           (choose-adjust-type! arg))))))
 
-(run! (command-line-arguments))
+(handle-exceptions exn
+    (begin
+      (display "permission denied")
+      (newline))
+  (run! (command-line-arguments)))
+
 
 
