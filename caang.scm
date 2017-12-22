@@ -5,15 +5,25 @@
 (require-extension regex)
 (require-extension ansi-escape-sequences)
 (require-extension fmt)
+(require-extension posix)
 
-(define backlight-path
-  "/sys/class/backlight/intel_backlight/")
+(define backlight-path "/sys/class/backlight")
+
+(define (get-vendor-backlight)
+  (car (directory backlight-path)))
+
+(define (get-full-backlight-path x)
+  (string-append backlight-path
+                 "/"
+                 (get-vendor-backlight)
+                 "/"
+                 x))
 
 (define backlight-brigthness-file
-  (string-append backlight-path "brightness"))
+  (get-full-backlight-path "brightness"))
 
 (define max-brigthness-file
-  (string-append backlight-path "max_brightness"))
+  (get-full-backlight-path "max_brightness"))
 
 (define (read-param)
   (car (command-line-arguments)))
@@ -120,9 +130,12 @@
 
 (handle-exceptions exn
     (begin
-      (display "permission denied")
+      (display "permission denied !")
       (newline))
   (run! (command-line-arguments)))
+
+
+
 
 
 
