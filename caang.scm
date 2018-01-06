@@ -83,16 +83,17 @@
 
 (define (run-if-range-valid! x f)
   (let ((arg-num (string->number x)))
-    (if (and (> arg-num 0) (<= arg-num 100))
+    (if (and (>= arg-num 1) (<= arg-num 100))
         (f x)
-        (print "must be in valid range 1..100"))))
+        (print "must be in valid range 2..100"))))
 
 (define (adjust-brigthness! f brigthness)
   (let ((val (number->string
               (f (get-brigthness-perc)
                  (extract-num brigthness)))))
     (run-if-range-valid! val
-                         (lambda (x) (set-brigthness! x)))))
+                         (lambda (x)
+                           (set-brigthness! x)))))
 
 (define (adjust-live!)
   (let ((current-brigthness (number->string
@@ -114,28 +115,23 @@
     (print "format doesn't valid, valid ex : +2, -2, or 2"))))
 
 (define (run! args)
-  (if (null? args)
-      (print (round-exact
-              (get-brigthness-perc)))
-      (let ((arg (car args)))
-        (cond
-         ((string-ci= arg "--live")
-          (adjust-live!))
-         ((string-ci= arg "--min")
-          (set-brigthness! "1"))
-         ((string-ci= arg "--max")
-          (set-brigthness! "100"))
-         (else
-          (choose-adjust-type! arg))))))
+  (when (not (null? args)) 
+    (let ((arg (car args)))
+      (cond
+       ((string-ci= arg "--live")
+        (adjust-live!))
+       ((string-ci= arg "--min")
+        (set-brigthness! "1"))
+       ((string-ci= arg "--max")
+        (set-brigthness! "100"))
+       (else
+        (choose-adjust-type! arg)))))
+  (print (round-exact
+          (get-brigthness-perc))))
 
 (handle-exceptions exn
     (begin
       (display "permission denied !")
       (newline))
   (run! (command-line-arguments)))
-
-
-
-
-
 
