@@ -126,8 +126,12 @@
         (set-brigthness! "100"))
        (else
         (choose-adjust-type! arg)))))
-  (print (round-exact
-          (get-brigthness-perc))))
+  (print
+   (string-append
+    (number->string (round-exact
+                     (get-brigthness-perc)))
+
+    "%")))
 
 (handle-exceptions exn
     (begin
