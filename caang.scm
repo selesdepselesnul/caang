@@ -58,12 +58,14 @@
   (run-if-range-valid!
    value
    (lambda (x)
-     (with-output-to-file backlight-brigthness-file
-       (lambda ()
-         (format #t
-                 (number->string
-                  (calc-actual-brigtness
-                   (string->number x)))))))))
+     (begin
+       (with-output-to-file backlight-brigthness-file
+         (lambda ()
+           (format #t
+                   (number->string
+                    (calc-actual-brigtness
+                     (string->number x))))))
+       (print-current-brigthness-perc)))))
 
 (define (is-add-pattern? x)
   (string-match "^\\+[0-9]+$" x))
@@ -91,9 +93,7 @@
   (let ((val (number->string
               (f (get-brigthness-perc)
                  (extract-num brigthness)))))
-    (run-if-range-valid! val
-                         (lambda (x)
-                           (set-brigthness! x)))))
+    (set-brigthness! val)))
 
 (define (adjust-live!)
   (let ((current-brigthness (number->string
@@ -114,18 +114,7 @@
    (else
     (print "format doesn't valid, valid ex : +2, -2, or 2"))))
 
-(define (run! args)
-  (when (not (null? args)) 
-    (let ((arg (car args)))
-      (cond
-       ((string-ci= arg "--live")
-        (adjust-live!))
-       ((string-ci= arg "--min")
-        (set-brigthness! "1"))
-       ((string-ci= arg "--max")
-        (set-brigthness! "100"))
-       (else
-        (choose-adjust-type! arg)))))
+(define (print-current-brigthness-perc)
   (print
    (string-append
     (number->string (round-exact
@@ -133,9 +122,24 @@
 
     "%")))
 
+(define (run! args)
+  (if (not (null? args)) 
+      (let ((arg (car args)))
+        (cond
+         ((string-ci= arg "--live")
+          (adjust-live!))
+         ((string-ci= arg "--min")
+          (set-brigthness! "1"))
+         ((string-ci= arg "--max")
+          (set-brigthness! "100"))
+         (else
+          (choose-adjust-type! arg))))
+      (print-current-brigthness-perc)))
+
 (handle-exceptions exn
     (begin
       (display "permission denied !")
       (newline))
   (run! (command-line-arguments)))
+
 
