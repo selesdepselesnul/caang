@@ -87,7 +87,7 @@
   (let ((arg-num (string->number x)))
     (if (and (>= arg-num 1) (<= arg-num 100))
         (f x)
-        (print "must be in valid range 2..100"))))
+        (print "must be in valid range 1..100"))))
 
 (define (adjust-brigthness! f brigthness)
   (let ((val (number->string
