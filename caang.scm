@@ -137,9 +137,7 @@
       (print-current-brigthness-perc)))
 
 (handle-exceptions exn
-    (begin
-      (display "permission denied !")
-      (newline))
+                   (begin
+                     (display "permission denied !")
+                     (newline))
   (run! (command-line-arguments)))
-
-
