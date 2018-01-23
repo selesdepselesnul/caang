@@ -126,6 +126,24 @@
 
     "%")))
 
+(define (get-home-dir)
+  "Get current $HOME dir"
+  (string-append
+    (string-substitute
+      "\n"
+      ""
+      (call-with-input-pipe
+       "echo $HOME"
+       read-all))
+    "/"))
+
+(define (save-default! x)
+  "Save default brigthness preferences value in $HOME/.caang_default"
+  (with-output-to-file
+    (string-append (get-home-dir) ".caang_default") 
+    (lambda ()
+      (format #t x))))
+
 (define (run! args)
   (if (null? args) 
       (print-current-brigthness-perc)
@@ -137,6 +155,9 @@
           (set-brigthness! "1"))
          ((string-ci= arg "--max")
           (set-brigthness! "100"))
+         ((string-ci= arg "--save-default")
+          (run-if-range-valid! (cadr args)
+                               save-default!))
          (else
           (choose-adjust-type! arg))))))
 
