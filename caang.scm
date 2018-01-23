@@ -77,6 +77,8 @@
   (string-match "^[0-9]+$" x))
 
 (define (extract-num x)
+  ;; Extract number part only from string x and convert it to number
+  ;; ex : "+4" will return 4
   (string->number
    (string-substitute
     "^(\\+|\\-)([0-9]+)$"
