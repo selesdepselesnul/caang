@@ -84,6 +84,8 @@
     x)))
 
 (define (run-if-range-valid! x f)
+  ;; run function f with supplied arg x if only in valid range
+  ;; (and (>= x 1) (<= x 100))
   (let ((arg-num (string->number x)))
     (if (and (>= arg-num 1) (<= arg-num 100))
         (f x)
@@ -123,7 +125,8 @@
     "%")))
 
 (define (run! args)
-  (if (not (null? args)) 
+  (if (null? args) 
+      (print-current-brigthness-perc)
       (let ((arg (car args)))
         (cond
          ((string-ci= arg "--live")
@@ -133,8 +136,7 @@
          ((string-ci= arg "--max")
           (set-brigthness! "100"))
          (else
-          (choose-adjust-type! arg))))
-      (print-current-brigthness-perc)))
+          (choose-adjust-type! arg))))))
 
 (handle-exceptions exn
                    (begin
