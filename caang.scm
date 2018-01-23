@@ -8,6 +8,7 @@
 (require-extension posix)
 
 (define backlight-path "/sys/class/backlight")
+(define default-pref-file ".caang_default")
 
 (define (get-vendor-backlight)
   (car (directory backlight-path)))
@@ -126,21 +127,38 @@
 
     "%")))
 
+(define (trim-nl x)
+  (string-substitute
+      "\n"
+      ""
+      x))
+
 (define (get-home-dir)
   "Get current $HOME dir"
   (string-append
-    (string-substitute
-      "\n"
-      ""
+    (trim-nl
       (call-with-input-pipe
        "echo $HOME"
        read-all))
     "/"))
 
+(define (get-home-dir-when-sudo)
+  (string-append
+    "/home/"
+    (trim-nl
+      (call-with-input-pipe
+        "echo $SUDO_USER"
+        read-all))
+    "/"))
+
+(define (get-default-pref-path)
+  (string-append (get-home-dir)
+                 ".caang_default"))
+
 (define (save-default! x)
   "Save default brigthness preferences value in $HOME/.caang_default"
   (with-output-to-file
-    (string-append (get-home-dir) ".caang_default") 
+    (get-default-pref-path)
     (lambda ()
       (format #t x))))
 
@@ -158,6 +176,11 @@
          ((string-ci= arg "--save-default")
           (run-if-range-valid! (cadr args)
                                save-default!))
+         ((string-ci= arg "--default")
+          (set-brigthness! (read-all
+                             (string-append
+                               (get-home-dir-when-sudo)
+                               default-pref-file))))
          (else
           (choose-adjust-type! arg))))))
 
@@ -166,3 +189,4 @@
                      (display "permission denied !")
                      (newline))
   (run! (command-line-arguments)))
+
